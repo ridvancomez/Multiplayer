@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/AnaMenu.unity
+    guid: 62bdccdb6853c5746b7a2b8fabaa908c
+  - enabled: 1
+    path: Assets/Scenes/Oda.unity
+    guid: 8bffa477e2924cd42903e065c56b5af1
   m_configObjects: {}

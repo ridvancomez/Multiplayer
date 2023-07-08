@@ -36,9 +36,11 @@ ScriptsOnlyBuild:
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
     - UnityEngine.EventSystems.StandaloneInputModule
+    - UnityEngine.UI.Button
     - UnityEngine.UI.CanvasScaler
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
+    - UnityEngine.UI.InputField
     - UnityEngine.UI.Shadow
     - UnityEngine.UI.Slider
     - UnityEngine.UI.Text
@@ -64,7 +66,9 @@ ScriptsOnlyBuild:
     - TMPro.TMP_Style
     - TMPro.VertexGradient
     UnityEngine.CoreModule:
+    - UnityEngine.Events.ArgumentCache
     - UnityEngine.Events.PersistentCallGroup
+    - UnityEngine.Events.PersistentListenerMode
     UnityEngine.TextCoreFontEngineModule:
     - UnityEngine.TextCore.FaceInfo
     - UnityEngine.TextCore.Glyph
@@ -72,15 +76,25 @@ ScriptsOnlyBuild:
     - UnityEngine.TextCore.GlyphRect
     UnityEngine.UI:
     - UnityEngine.UI.AnimationTriggers
+    - UnityEngine.UI.Button/ButtonClickedEvent
     - UnityEngine.UI.ColorBlock
     - UnityEngine.UI.FontData
+    - UnityEngine.UI.InputField/EndEditEvent
+    - UnityEngine.UI.InputField/OnChangeEvent
+    - UnityEngine.UI.InputField/SubmitEvent
     - UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
     - UnityEngine.UI.Navigation
     - UnityEngine.UI.Slider/SliderEvent
     - UnityEngine.UI.SpriteState
-  methodsToPreserve: []
+  methodsToPreserve:
+  - assembly: Assembly-CSharp
+    fullTypeName: ServerManager
+    methodName: SetUpRoom
+  - assembly: Assembly-CSharp
+    fullTypeName: ServerManager
+    methodName: LogIn
   sceneClasses:
-    Assets/Scenes/SampleScene.unity:
+    Assets/Scenes/AnaMenu.unity:
     - Class: 1
       Script: {instanceID: 0}
     - Class: 4
@@ -103,8 +117,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 54
       Script: {instanceID: 0}
-    - Class: 64
-      Script: {instanceID: 0}
     - Class: 65
       Script: {instanceID: 0}
     - Class: 74
@@ -126,6 +138,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 16046}
     - Class: 114
+      Script: {instanceID: 16048}
+    - Class: 114
       Script: {instanceID: 16100}
     - Class: 114
       Script: {instanceID: 16144}
@@ -137,6 +151,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 17150}
     - Class: 114
       Script: {instanceID: 17358}
+    - Class: 114
+      Script: {instanceID: 17408}
     - Class: 114
       Script: {instanceID: 17570}
     - Class: 114
@@ -210,6 +226,69 @@ ScriptsOnlyBuild:
     - Class: 224
       Script: {instanceID: 0}
     - Class: 225
+      Script: {instanceID: 0}
+    - Class: 850595691
+      Script: {instanceID: 0}
+    Assets/Scenes/Oda.unity:
+    - Class: 1
+      Script: {instanceID: 0}
+    - Class: 4
+      Script: {instanceID: 0}
+    - Class: 20
+      Script: {instanceID: 0}
+    - Class: 21
+      Script: {instanceID: 0}
+    - Class: 23
+      Script: {instanceID: 0}
+    - Class: 28
+      Script: {instanceID: 0}
+    - Class: 33
+      Script: {instanceID: 0}
+    - Class: 43
+      Script: {instanceID: 0}
+    - Class: 48
+      Script: {instanceID: 0}
+    - Class: 64
+      Script: {instanceID: 0}
+    - Class: 81
+      Script: {instanceID: 0}
+    - Class: 89
+      Script: {instanceID: 0}
+    - Class: 104
+      Script: {instanceID: 0}
+    - Class: 108
+      Script: {instanceID: 0}
+    - Class: 114
+      Script: {instanceID: 16100}
+    - Class: 114
+      Script: {instanceID: 17150}
+    - Class: 114
+      Script: {instanceID: 17358}
+    - Class: 114
+      Script: {instanceID: 19678}
+    - Class: 114
+      Script: {instanceID: 20250}
+    - Class: 114
+      Script: {instanceID: 20398}
+    - Class: 114
+      Script: {instanceID: 20716}
+    - Class: 115
+      Script: {instanceID: 0}
+    - Class: 128
+      Script: {instanceID: 0}
+    - Class: 157
+      Script: {instanceID: 0}
+    - Class: 196
+      Script: {instanceID: 0}
+    - Class: 213
+      Script: {instanceID: 0}
+    - Class: 222
+      Script: {instanceID: 0}
+    - Class: 223
+      Script: {instanceID: 0}
+    - Class: 224
+      Script: {instanceID: 0}
+    - Class: 850595691
       Script: {instanceID: 0}
   scriptHashData:
   - hash:
@@ -628,7 +707,7 @@ ScriptsOnlyBuild:
     className: CurrentRoomIsOfflineProperty
   - hash:
       serializedVersion: 2
-      Hash: 58ed70c5565bb15c5be6a07453cd9a0e
+      Hash: 95a98dcb49af0a88bd7712fb75c3ebe0
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ServerManager
@@ -1888,5 +1967,6 @@ ScriptsOnlyBuild:
     className: UnityOnSliderValueChangedMessageListener
   platform: 19
   scenePathNames:
-  - Assets/Scenes/SampleScene.unity
+  - Assets/Scenes/AnaMenu.unity
+  - Assets/Scenes/Oda.unity
   playerPath: "C:/Users/rdvnc/Desktop/Build Al\u0131nan Oyunlar/Multiplayer/Multiplayer.exe"

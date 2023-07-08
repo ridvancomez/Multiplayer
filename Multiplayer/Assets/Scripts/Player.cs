@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class Player : MonoBehaviour
     {
         pw = GetComponent<PhotonView>();
 
-        if (pw.IsMine )
+        if (pw.IsMine)
         {
             GetComponent<Renderer>().material.color = Color.green;
         }
@@ -26,19 +27,35 @@ public class Player : MonoBehaviour
         {
             Move();
             Jump();
+            Rotation();
             Fire();
-        } 
+        }
+    }
+
+    private void Rotation()
+    {
+        float x = Input.GetAxis("Horizontal");
+        if (x < 0)
+        {
+            transform.Rotate(Vector3.up * -.5f);
+        }
+
+        if (x > 0)
+        {
+            transform.Rotate(Vector3.up * .5f);
+        }
     }
 
     private void Fire()
     {
-        if(Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             RaycastHit hit;
 
-            if(Physics.Raycast(transform.position, transform.forward, out hit, 100f))
+            if (Physics.Raycast(transform.position, transform.forward, out hit, 100f))
             {
-                hit.collider.gameObject.GetComponent<PhotonView>().RPC("Damage", RpcTarget.All, 20);
+                if (hit.collider.gameObject.CompareTag("Player"))
+                    hit.collider.gameObject.GetComponent<PhotonView>().RPC("Damage", RpcTarget.All, 20);
             }
         }
     }
@@ -48,17 +65,18 @@ public class Player : MonoBehaviour
     {
         health = Mathf.Clamp(health - damageAmount, 0, 100);
         Debug.Log("Can: " + health);
-        if(health == 0)
-         PhotonNetwork.Destroy(gameObject);
-        
+        if (health == 0)
+            GetComponent<Player>().enabled = false;
+
+
     }
 
     private void Move()
     {
-        float x = Input.GetAxis("Horizontal") * Time.deltaTime * 20;
-        float z = Input.GetAxis("Vertical") * Time.deltaTime * 20;
 
-        transform.Translate(x, 0, z);
+        float z = Input.GetAxis("Vertical") * Time.deltaTime * 5;
+
+        transform.Translate(0, 0, z);
     }
 
     private void Jump()

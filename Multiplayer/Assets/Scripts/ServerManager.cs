@@ -4,36 +4,48 @@ using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
 using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class ServerManager : MonoBehaviourPunCallbacks
 {
     // Start is called before the first frame update
 
 
-    [SerializeField]
-    private List<TextMeshProUGUI> playerNamesText;
+    private List<TextMeshProUGUI> playerNamesText = new();
+
+
+    private TextMeshProUGUI playerIsExpected;
 
     [SerializeField]
-    private TextMeshProUGUI playerIsExpected;
+    private Text serverInfo;
+
+    [SerializeField]
+    private InputField userNameInputField;
+
+    [SerializeField]
+    private InputField roomNameInputField;
+
+    private string userName;
+    private string roomName;
+
+    private GameObject[] playerLocations;
 
 
 
     void Start()
     {
-
-
-        //Sunucya bağlan
-        //Lobiye bağlan
-        //Odaya bağlan
-
-        InvokeRepeating("NameControl", 0, .5f);
-
         PhotonNetwork.ConnectUsingSettings(); //Bağlanırsa OnConectedToMaster methodu çalışacak
+
+        if (PhotonNetwork.IsConnected)
+            serverInfo.text = "Servere bağlandı";
+
+        DontDestroyOnLoad(gameObject);
     }
 
     private void NameControl()
     {
-
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
             playerNamesText[i].text = PhotonNetwork.PlayerList[i].NickName;
@@ -41,11 +53,9 @@ public class ServerManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.PlayerList.Length == playerNamesText.Count)
         {
-            //for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-            //{
-            //    playerNamesText[i].text = PhotonNetwork.PlayerList[i].NickName;
-            //}
             playerIsExpected.text = "";
+            //GameObject.FindGameObjectWithTag("PlayerIsExpected").AddComponent<TextMeshProUGUI>().text = "";
+
             CancelInvoke("NameControl");
 
         }
@@ -57,21 +67,62 @@ public class ServerManager : MonoBehaviourPunCallbacks
         {
             item.text = "----";
         }
-        
+
     }
 
-    public override void OnConnectedToMaster()
+
+    public void SetUpRoom()
     {
-        //base.OnConnectedToMaster();
-        Debug.Log("Sunucuya bağlanıldı"); //Bağlanırsa OnJoinedLobby metodu çalışacak
+        SceneManager.LoadScene(1);
+        userName = userNameInputField.text;
+        roomName = roomNameInputField.text;
+
         PhotonNetwork.JoinLobby();
     }
 
+    public void LogIn()
+    {
+        SceneManager.LoadScene(1);
+        userName = userNameInputField.text;
+        roomName = roomNameInputField.text;
+
+        PhotonNetwork.JoinLobby();
+    }
+
+    //public override void OnConnectedToMaster()
+    //{
+    //    //base.OnConnectedToMaster();
+    //    Debug.Log("Sunucuya bağlanıldı"); //Bağlanırsa OnJoinedLobby metodu çalışacak
+
+    //}
+
     public override void OnJoinedLobby()
     {
-        Debug.Log("Lobiye bağlanıldı");
-        //PhotonNetwork.JoinRandomRoom();//Bağlanırsa OnJoinedRoom metodu çalışacak
-        PhotonNetwork.JoinOrCreateRoom("Oda1", new RoomOptions { MaxPlayers = 2, IsOpen = true, IsVisible = true }, TypedLobby.Default);
+        playerIsExpected = GameObject.FindGameObjectWithTag("PlayerIsExpected").GetComponent<TextMeshProUGUI>();
+        
+        
+        GameObject[] playerNamesObjects = GameObject.FindGameObjectsWithTag("PlayerName");
+        playerNamesObjects = playerNamesObjects.OrderBy(x => x.name).ToArray();
+
+        
+        foreach (var item in playerNamesObjects)
+        {
+            playerNamesText.Add(item.GetComponent<TextMeshProUGUI>());
+        }
+
+        
+
+        if (userName != "" && roomName != "")
+        {
+            PhotonNetwork.JoinOrCreateRoom(roomName, new RoomOptions { MaxPlayers = 2, IsOpen = true, IsVisible = true }, TypedLobby.Default);
+        }
+        else
+        {
+            PhotonNetwork.JoinRandomRoom();
+        }
+        InvokeRepeating("NameControl", 0, .5f);
+
+        //PhotonNetwork.JoinOrCreateRoom("Oda1", new RoomOptions { MaxPlayers = 2, IsOpen = true, IsVisible = true }, TypedLobby.Default);
 
         //base.OnJoinedLobby();
     }
@@ -80,12 +131,15 @@ public class ServerManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Odaya bağlanıldı");
 
-        GameObject myObject = PhotonNetwork.Instantiate("Player", new Vector3(Random.Range(-4.5f,4.5f), 1, Random.Range(-4.5f, 4.5f)), Quaternion.identity, 0, null);
+        playerLocations = GameObject.FindGameObjectsWithTag("Location").OrderBy(x => x.name).ToArray();
+        
 
-        string playerName = "M-" + Random.Range(1, 10000).ToString();
+        GameObject myObject = PhotonNetwork.Instantiate("Player", playerLocations[PhotonNetwork.PlayerList.Length].transform.position, Quaternion.Euler(0,90,0), 0, null);
+
+        //string playerName = "M-" + Random.Range(1, 10000).ToString();
 
         PhotonView pw = myObject.GetComponent<PhotonView>();
-        pw.Owner.NickName = playerName;
+        pw.Owner.NickName = userName;
 
         //base.OnJoinedRoom();
     }
@@ -94,7 +148,7 @@ public class ServerManager : MonoBehaviourPunCallbacks
     {
         foreach (var item in playerNamesText)
         {
-            if(item.text.Equals(otherPlayer.NickName))
+            if (item.text.Equals(otherPlayer.NickName))
             {
                 item.text = "----";
                 playerIsExpected.text = "Oyuncu Bekleniyor";
